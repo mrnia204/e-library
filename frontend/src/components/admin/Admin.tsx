@@ -4,7 +4,10 @@ import Overview from "./Overview";
 import StudentManagement from "./Studentmanagement";
 import AnalyticsDashboard from "./Analytics";
 import Reports from "./Reports";
-import { useNavigate } from "react-router-dom";
+import { useAsyncValue, useNavigate } from "react-router-dom";
+
+import { useLogout } from "@/hooks/useLogout";
+import { useActivityTracker } from "@/hooks/useActivityTracker";
 
 
 
@@ -18,7 +21,11 @@ const views = [
 // Mock data for charts
 
 const Admin = () => {
+  useAsyncValue(); // this tracks time automatically
   const [active, setActive] = useState("Overview");
+
+  const { logout } = useLogout();
+  useActivityTracker(); // this will auto-update time spent
 
   const navigate = useNavigate();
 
@@ -48,6 +55,7 @@ const Admin = () => {
               <div>
                 <h2 className="text-xl font-bold">Admin Dashboard</h2>
                 <p className="text-sm text-gray-600">School eLibrary System </p>
+                <Button onClick={logout} className="bg-red-500 text-white px4 py-3 rounded hover:bg-red-600n">Logout</Button>
               </div>
             </div>
 

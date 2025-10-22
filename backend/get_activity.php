@@ -3,11 +3,11 @@
   include 'config.php';
 
 
-  $userid = isset($_GET['userid']) ? $_GET['userid'] : null;
+  $user_id = isset($_GET['user_id']) ? $_GET['user_id'] : null;
 
-  if ($userid) {
+  if ($user_id) {
       $stmt = $conn->prepare("SELECT * FROM activity_logs WHERE userid = ? ORDER BY logintime DESC");
-      $stmt->bind_param("i", $userid);
+      $stmt->bind_param("i", $user_id);
   } else {
       $stmt = $conn->prepare("SELECT * FROM activity_logs ORDER BY logintime DESC");
   }

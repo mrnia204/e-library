@@ -12,10 +12,10 @@ include 'config.php';
 $data = json_decode(file_get_contents("php://input"), true);
 
 // Validate required fields
-$userid = isset($data['userid']) ? intval($data['userid']) : null;
+$user_id = isset($data['user_id']) ? intval($data['user_id']) : null;
 $action = isset($data['action']) ? strtolower(trim($data['action'])) : null;
 
-if (!$userid || !$action) {
+if (!$user_id || !$action) {
     echo json_encode([
         "status" => "error",
         "message" => "User ID and action are required"
@@ -33,7 +33,7 @@ function sqlError($stmt, $conn) {
 if ($action === 'login') {
     $stmt = $conn->prepare("INSERT INTO activity_logs (user_id, login_time, time_spent) VALUES (?, NOW(), 0)");
     if (!$stmt) sqlError($stmt, $conn);
-    $stmt->bind_param("i", $userid);
+    $stmt->bind_param("i", $user_id);
 
     if ($stmt->execute()) {
         echo json_encode([
@@ -58,7 +58,7 @@ if ($action === 'login') {
 
     $stmt = $conn->prepare("
         UPDATE activity_logs
-        SET logouttime = NOW(), time_spent = TIMESTAMPDIFF(SECOND, login_time, NOW())
+        SET logout_time = NOW(), time_spent = TIMESTAMPDIFF(SECOND, login_time, NOW())
         WHERE id = ? AND user_id = ?
     ");
     if (!$stmt) sqlError($stmt, $conn);
@@ -83,11 +83,11 @@ if ($action === 'login') {
 
     $stmt = $conn->prepare("
         UPDATE activity_logs
-        SET timespent = TIMESTAMPDIFF(SECOND, logintime, NOW())
+        SET time_spent = TIMESTAMPDIFF(SECOND, login_time, NOW())
         WHERE id = ? AND user_id = ? AND logout_time IS NULL
     ");
     if (!$stmt) sqlError($stmt, $conn);
-    $stmt->bind_param("ii", $activity_id, $userid);
+    $stmt->bind_param("ii", $activity_id, $user_id);
 
     if ($stmt->execute()) {
         echo json_encode(["status" => "success", "message" => "Activity updated"]);
