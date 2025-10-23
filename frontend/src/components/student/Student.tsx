@@ -1,26 +1,45 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "../ui/button";
 import Dashboard from "./Dashboard";
 import MyProgress from "./Myprogress";
 import Calendar from "./Calendar";
 import Announcements from "./Announcements";
 
+import { useLogout } from "@/hooks/useLogout";
+import { useActivityTracker } from "@/hooks/useActivityTracker";
+import { useAsyncValue } from "react-router-dom";
+import Dropdown from "../shared/SingleDropdown";
 
-const Student = () => {
-  const[active, setActive] = useState("Dashboard");
-  // interface ActivityData {
-  //   name: string;
-  //   value: number;
-  //   color: string;
-  // }
 
-  const views = [
+const views = [
   { view: "Dashboard", icon: "ri-dashboard-line"},
   { view: "My Progress", icon: "ri-line-chart-line"},
   { view: "Calendar", icon: "ri-calendar-line"},
   { view: "Announcements", icon: "ri-notification-line"},
 ]; 
 
+const Student = () => {
+  useAsyncValue(); // this tracks time automatically
+  const[active, setActive] = useState("Dashboard");
+
+  const { logout } = useLogout();
+  useActivityTracker(); // this will auto update time spent
+  
+  const navigate = useNavigate();
+
+
+  useEffect(() => {
+    const user = localStorage.getItem("user");
+    if (!user) {
+      navigate("/student-login"); // stay in the login form
+    } else {
+      const parsed = JSON.parse(user);
+      if (parsed.role !== "student") {
+        navigate("/admin-login");
+      }
+    }
+  }, [navigate])
 
   return ( 
     <div className="min-h-screen bg-gray-50">
@@ -45,11 +64,10 @@ const Student = () => {
                   <i className="ri-book-open-line mr-2"></i>Access eLibrary
                 </a>
               </Button>
-              <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
-                  <i className="ri-user-fill text-gray-600"></i>
-                </div>
-              <span className="text-sm font-medium text-gray-700">full_name</span>
+              <div className="flex items-center space-x-2">     
+                <span className="text-sm font-medium text-gray-700">
+                  <Dropdown title="Student"/>
+                </span>
               </div>
             </div>
           </div>
