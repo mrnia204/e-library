@@ -8,6 +8,7 @@ import { useAsyncValue, useNavigate } from "react-router-dom";
 
 import { useLogout } from "@/hooks/useLogout";
 import { useActivityTracker } from "@/hooks/useActivityTracker";
+import Dropdown from "../shared/SingleDropdown";
 
 
 
@@ -23,6 +24,7 @@ const views = [
 const Admin = () => {
   useAsyncValue(); // this tracks time automatically
   const [active, setActive] = useState("Overview");
+  const [showLogout, setShowLogout] = useState(false);
 
   const { logout } = useLogout();
   useActivityTracker(); // this will auto-update time spent
@@ -55,7 +57,7 @@ const Admin = () => {
               <div>
                 <h2 className="text-xl font-bold">Admin Dashboard</h2>
                 <p className="text-sm text-gray-600">School eLibrary System </p>
-                <Button onClick={logout} className="bg-red-500 text-white px4 py-3 rounded hover:bg-red-600n">Logout</Button>
+               
               </div>
             </div>
 
@@ -64,11 +66,11 @@ const Admin = () => {
                 <i className="ri-download-line mr-2"></i>Export Data
               </Button>
               <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
-                <i className="ri-user-fill text-gray-600"></i>
-              </div>
-              <span className="text-sm font-medium text-gray-700">Admin</span>
-              </div>
+                
+                <span className="text-sm font-medium text-gray-700">
+                  <Dropdown title="Admin"/>
+                </span> 
+              </div> 
             </div>
           </div>
         </div>

@@ -15,6 +15,8 @@ import {
 import { Input } from "../ui/input";
 import { post } from "@/lib/http";
 
+
+
 const formSchema = z.object({
   username: z.string().min(2, {message: "Username must be at least 2 characters"}),
   password: z.string().min(6, {message: "Password must be at least 6 characters."}),
@@ -32,60 +34,60 @@ const StudentLoginForm = () => {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    setLoading(true)
-    setMessage(null)
+    setLoading(true);
+    setMessage(null);
 
-    try {
-      // step 1: Authenticate user
-      const authRes = await post("authenticate.php", {
+    try {    
+      // STEP 1: Only authenticate first
+      const authRes = await post("/authenticate.php", {
         username: values.username,
         password: values.password,
         role: "student",
-      })
+      });
 
-      console.log("authenticate response", authRes);
-
-      if (!authRes.success) {
-        setMessage(authRes.message)
-        setLoading(false)
-        return
+      if (!authRes?.success) {
+        setMessage(authRes?.message || "Login failed");
+        setLoading(false);
+        return;
       }
 
-      const userid = authRes.userid;
-      console.log("step 2: Logggin activity for user", userid);
+      const user_id = authRes.user_id;
 
-      // step 2: Record login activity
-      const activityRes = await post("log_activity.php", {
-        userid,
+      // STEP 2: record login activity
+      const activityRes = await post("/log_activity.php", {
+        user_id: user_id,
         action: "login",
-      })
+      });
 
-      console.log("Activity log response", activityRes);
+      console.log("Acitivity log response", activityRes);
 
       if (activityRes.status === "success") {
-        // step 3: Save user info and activity_id
+        // STEP 3: Save user info and activity_id
         localStorage.setItem(
           "user",
           JSON.stringify({
-            userid,
+            user_id: user_id,
             role: "student",
-            activity_id: activityRes.activity_id, // This matches your PHP response
+            activity_id: activityRes.activity_id,
             username: values.username,
+            loginTime: new Date().toISOString(),
           })
-        )
-        setMessage("Login successful! Redirecting...")
-        setTimeout(() =>navigate("/student-dashboard"), 1000);
-      } else {
-        setMessage(activityRes.message || "Failed to log activity")
-      }
-    } catch (error) {
-      console.error("Login error", error);
-      setMessage("Connection error. Please try again");
-    } finally {
-      setLoading(false);
-    }
-  }
+        );
 
+        setMessage("Login successful! Redirecting...");
+        setTimeout(() => navigate("/student-dashboard"), 1000);
+      } else {
+        setMessage(activityRes.message || "Failed to log activity");
+    }
+  } catch (error) {
+    console.error("Login error", error);
+    setMessage("Connection error. Please try again");
+  } finally {
+    setLoading(false);
+  }
+}
+
+      
 
   return (
     <Form {...form}>
@@ -97,7 +99,7 @@ const StudentLoginForm = () => {
           name="username"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Username</FormLabel>
+              <FormLabel>Stuent Username</FormLabel>
               <FormControl>
                <div className="relative">
                   <span className="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none text-gray-400">
@@ -105,7 +107,7 @@ const StudentLoginForm = () => {
                   </span>
                   <Input
                     className="pl-10 pr-4 py-3"
-                    placeholder="Enter your student username"
+                    placeholder="Enter your username"
                     {...field}
                   />
                 </div>

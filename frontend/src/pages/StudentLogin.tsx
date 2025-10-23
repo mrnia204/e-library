@@ -14,7 +14,10 @@ const Loginpage = () => {
             <p className="p-standard">Sign in to access your eLibrary</p>
           </div>
           <StudentLoginForm />
-          <div className="mt-6 text-center">
+          <div className="mt-6 flex justify-between items-center">
+            <span className="text-sm text-blue-600 cursor-pointer hover:underline">
+              <NavLink to='/' className="text-sm">Back to Home</NavLink>
+            </span>
             <p className="text-sm text-gray-600">Administrator?
               <NavLink to="/admin-login" className="text-blue-600 pl-2">Sign in here </NavLink>
             </p>

@@ -16,8 +16,11 @@ const AdminLoginpage = () => {
             <p className="p-standard">Secure Administration Access</p>
           </div>
           <AdminLoginForm />
-          <div className="mt-6 text-center">
-            <p className="text-sm text-gray-600">Student?
+          <div className="mt-6 flex justify-between items-center">
+            <span className="text-sm text-purple-600 cursor-pointer hover:underline">
+              <NavLink to='/'>Back to Home</NavLink>
+            </span>
+            <p className="text-sm text-gray-600 text-center">Student?
               <NavLink to="/student-login" className="text-purple-600 pl-2">Sign in here </NavLink>
             </p>
           </div>
